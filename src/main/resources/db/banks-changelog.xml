@@ -1,15 +1,79 @@
 <databaseChangeLog
-	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<changeSet id="initial-data" author="justin">
-		<sqlFile path="db/table_initialization_script.sql" />
-		<loadData tableName="banks" file="db/banks.csv"></loadData>
-		<loadData tableName="branches" file="db/bank_branches.csv">
-			<column name="bank_name" header="bank_name" type="skip" />
-		</loadData>
-	</changeSet>
+    <changeSet id="create_bank_tables" author="justin">
+        <createTable tableName="banks">
+            <column name="id" type="integer">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="name" type="varchar(49)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <createIndex tableName="banks" indexName="idx_banks__name"
+            unique="true">
+            <column name="name"></column>
+        </createIndex>
+
+        <createTable tableName="branches">
+            <column name="ifsc" type="varchar(11)">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="bank_id" type="integer">
+                <constraints nullable="false" />
+            </column>
+            <column name="branch" type="varchar(74)">
+                <constraints nullable="false" />
+            </column>
+            <column name="address" type="varchar(195)">
+                <constraints nullable="false" />
+            </column>
+            <column name="city" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="district" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="state" type="varchar(26)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <createIndex tableName="branches"
+            indexName="idx_branches__city">
+            <column name="city"></column>
+        </createIndex>
+        <createIndex tableName="branches"
+            indexName="idx_branches__bank_id">
+            <column name="bank_id"></column>
+        </createIndex>
+        <addForeignKeyConstraint
+            constraintName="fk_branches_bank_id" referencedTableName="banks"
+            baseColumnNames="bank_id" baseTableName="branches"
+            referencedColumnNames="id" />
+
+        <createView viewName="bank_branches">
+             SELECT branches.ifsc,
+                branches.bank_id,
+                branches.branch,
+                branches.address,
+                branches.city,
+                branches.district,
+                branches.state,
+                banks.name AS bank_name
+               FROM (branches
+                 JOIN banks ON ((branches.bank_id = banks.id)));
+            </createView>
+
+    </changeSet>
+    
+    <changeSet id="initial-data-load" author="justin">
+        <loadData tableName="banks" file="db/banks.csv"></loadData>
+        <loadData tableName="branches" file="db/bank_branches.csv">
+            <column name="bank_name" header="bank_name" type="skip" />
+        </loadData>
+    </changeSet>
 
 </databaseChangeLog>
