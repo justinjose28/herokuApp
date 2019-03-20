@@ -1,0 +1,59 @@
+
+import com.github.sherter.googlejavaformatgradleplugin.GoogleJavaFormat
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
+    }
+}
+
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.14'
+    id "com.github.sherter.google-java-format" version "0.6"
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+bootJar {
+    baseName = 'herokuApp'
+    version =  '1.0.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+lombok {
+    version = "1.18.2"
+    sha256 = ""
+}
+
+task format(type: GoogleJavaFormat) {
+  source 'src/main'
+  source 'src/test'
+  include '**/*.java'
+}
+
+    compileJava.dependsOn verifyGoogleJavaFormat
+    compileTestJava.dependsOn verifyGoogleJavaFormat
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.liquibase:liquibase-core")
+    compile("org.postgresql:postgresql:42.2.5")
+    
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+}
+

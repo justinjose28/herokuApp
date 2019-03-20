@@ -1,0 +1,23 @@
+# Spring Boot
+spring:
+  application:
+    name: Banks
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://127.0.0.1:5432/banks}
+    username: ${SPRING_DATASOURCE_USER:banks_system_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+  liquibase:
+    change-log: classpath:db/banks-changelog.xml
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+           lob:
+              non_contextual_creation: true
+     
+# HTTP server
+server:
+  port: 8181
+  address: 0.0.0.0
+  servlet:
+    contextPath: /heroku
