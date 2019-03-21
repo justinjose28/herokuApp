@@ -1,0 +1,14 @@
+# Basic Docker Compose for running DB locally during development
+# without need to install it
+
+version: '3'
+services:
+  banks-postgres-db:
+      image: postgres:9.6.6
+      container_name: banks-postgres-db
+      ports:
+        - "0.0.0.0:5432:5432"
+      environment:
+        - POSTGRES_PASSWORD=password
+        - POSTGRES_USER=banks_system_user
+        - POSTGRES_DB=banks

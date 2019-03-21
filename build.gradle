@@ -12,6 +12,8 @@ buildscript {
 plugins {
     id 'io.franzbecker.gradle-lombok' version '1.14'
     id "com.github.sherter.google-java-format" version "0.6"
+    id "com.palantir.docker" version "0.19.2"
+    id 'com.palantir.docker-compose' version "0.19.2"
 }
 
 apply plugin: 'java'
@@ -57,3 +59,19 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+task dbUp(type: Exec) {
+    description "Start local postgres"
+    commandLine "docker-compose", "up", "-d"
+}
+
+task dbDown(type: Exec) {
+    description "Stops local postgres"
+    commandLine "docker-compose", "down"
+}
+
+task quickStart(type: Exec) {
+    description "Run spring boot application after starting local progress"
+    dependsOn dbUp
+    dependsOn bootRun
+    tasks.findByName('bootRun').mustRunAfter 'dbUp'
+}

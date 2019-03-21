@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class BankBranchController {
   @Autowired private BankBranchRepository repository;
 
+  /** Get branches by bank name and city */
   @GetMapping
   public List<BankBranch> getBankBranches(
       @RequestParam(name = "bankName") String bankName, @RequestParam(name = "city") String city) {
     return repository.findByBankNameIgnoreCaseAndCityIgnoreCase(bankName, city);
   }
 
+  /** Get branch by the ifsc code */
   @GetMapping("/{ifscCode}")
   public BankBranch getBranchByIfscCode(@PathVariable("ifscCode") String ifscCode) {
     return repository

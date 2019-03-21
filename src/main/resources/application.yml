@@ -3,6 +3,7 @@ spring:
   application:
     name: Banks
   datasource:
+    # heroku will replace ${SPRING_DATASOURCE_XXX) with appropriate values
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://127.0.0.1:5432/banks}
     username: ${SPRING_DATASOURCE_USER:banks_system_user}
     password: ${SPRING_DATASOURCE_PASSWORD:password}
